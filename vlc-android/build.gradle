@@ -199,6 +199,10 @@ task generateSources (type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     devImplementation project(':libvlc')
     devImplementation project(':medialibrary')
@@ -249,6 +253,11 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$rootProject.ext.mockito"
     testImplementation "org.powermock:powermock-api-mockito2:$rootProject.ext.powerMock"
     testImplementation "org.powermock:powermock-module-junit4:$rootProject.ext.powerMock"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
+
+    //MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
 }
 
 static def buildTime() {
