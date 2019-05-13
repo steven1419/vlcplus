@@ -97,6 +97,7 @@ import org.videolan.vlc.gui.audio.PlaylistAdapter;
 import org.videolan.vlc.gui.browser.FilePickerActivity;
 import org.videolan.vlc.gui.browser.FilePickerFragmentKt;
 import org.videolan.vlc.gui.dialogs.RenderersDialog;
+import org.videolan.vlc.gui.helpers.HistoryOperator;
 import org.videolan.vlc.gui.helpers.OnRepeatListener;
 import org.videolan.vlc.gui.helpers.PlayerOptionType;
 import org.videolan.vlc.gui.helpers.PlayerOptionsDelegate;
@@ -162,6 +163,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements IPlaybackS
     private View mRootView;
     private Uri mUri;
     private boolean mAskResume = true;
+
+    private HistoryOperator mHistoryOperator;
 
     private ImageView mPlaylistToggle;
     private RecyclerView mPlaylist;
@@ -400,6 +403,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IPlaybackS
             mSavedTime = savedInstanceState.getLong(KEY_TIME);
             mUri = (Uri) savedInstanceState.getParcelable(KEY_URI);
         }
+        mHistoryOperator = new HistoryOperator();
     }
 
     @Override
@@ -2607,6 +2611,13 @@ public class VideoPlayerActivity extends AppCompatActivity implements IPlaybackS
             // Get the title
             if (itemTitle == null && !TextUtils.equals(mUri.getScheme(), "content"))
                 title = mUri.getLastPathSegment();
+
+            if (media.getLength() > 0) {
+                if (title == null && itemTitle != null) title = itemTitle;
+                Log.d(TAG, "loadMedia: video " + title + " started");
+                mHistoryOperator.saveTimeRecord();
+                mHistoryOperator.saveVideoRecord(title);
+            }
         } else if (mService.hasMedia() && !mDisplayManager.isPrimary()){
             onPlaying();
         } else {

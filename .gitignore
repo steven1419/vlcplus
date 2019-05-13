@@ -67,3 +67,5 @@ libvlc.pc
 libvlc.pc.backup
 libvlcpp.pc
 lib/
+
+self-compile.sh

@@ -48,6 +48,7 @@ import org.videolan.vlc.extensions.api.VLCExtensionItem;
 import org.videolan.vlc.gui.audio.AudioBrowserFragment;
 import org.videolan.vlc.gui.browser.BaseBrowserFragment;
 import org.videolan.vlc.gui.browser.ExtensionBrowser;
+import org.videolan.vlc.gui.helpers.HistoryOperator;
 import org.videolan.vlc.gui.helpers.Navigator;
 import org.videolan.vlc.gui.helpers.UiTools;
 import org.videolan.vlc.gui.onboarding.OnboardingActivityKt;
@@ -82,6 +83,8 @@ public class MainActivity extends ContentActivity implements ExtensionManagerSer
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
     private Navigator mNavigator;
+
+    private HistoryOperator mHistoryOperator;
 
     private boolean mScanNeeded = false;
 
@@ -130,6 +133,7 @@ public class MainActivity extends ContentActivity implements ExtensionManagerSer
         mScanNeeded = savedInstanceState == null && mSettings.getBoolean("auto_rescan", true);
         mExtensionsManager = ExtensionsManager.getInstance();
         mMediaLibrary = VLCApplication.getMLInstance();
+        mHistoryOperator = new HistoryOperator();
     }
 
     private void setupNavigationView() {
@@ -170,6 +174,7 @@ public class MainActivity extends ContentActivity implements ExtensionManagerSer
     @Override
     protected void onStop() {
         super.onStop();
+        mHistoryOperator.saveTimeRecord();
         mNavigationView.setNavigationItemSelectedListener(null);
         if (getChangingConfigurations() == 0) {
             /* Check for an ongoing scan that needs to be resumed during onResume */

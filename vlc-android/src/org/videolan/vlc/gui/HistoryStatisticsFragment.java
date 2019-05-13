@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.view.ActionMode;
 import androidx.lifecycle.ViewModelProviders;
@@ -159,6 +161,14 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
         mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
+    public void updateLoadRecord(String input, int position) {
+        loadRecord.set(currentIndex + position, input);
+        Toast.makeText(mActivity, "comment:" + loadRecord.get(currentIndex + position), Toast.LENGTH_SHORT).show();
+        updateVideoRecord(position);
+        selectData();
+        mHistoryStatisticsAdapter.notifyItemChanged(position);
+    }
+
     private void initTimeData() {
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> timeRecord = new HistoryOperator().getTimeList();
@@ -282,6 +292,13 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
                 lastInsertTime = stringSplit[0];
             }
         }
+    }
+
+    private void updateVideoRecord(int position) {
+//        Toast.makeText(mActivity.getApplicationContext(), "loadRecord:" + loadRecord.get(currentIndex + position), Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "updateVideoRecord: loadRecord: " + loadRecord.get(currentIndex + position));
+        String[] stringSplit = loadRecord.get(currentIndex + position).split(",");
+        videoRecord.set(currentIndex + position, loadRecord.get(currentIndex + position).substring(stringSplit[0].length() + stringSplit[1].length() + 2));
     }
 
     private void selectData() {

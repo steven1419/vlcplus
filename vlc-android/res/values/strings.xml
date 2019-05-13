@@ -517,6 +517,13 @@
     <string name="tv_ui_summary">Change UI to TV adapted theme</string>
     <string name="medialibrary">Media library</string>
     <string name="medialibrary_directories">Media library folders</string>
+    <string name="comment_save">Save Comment</string>
+    <string name="comment_hint">Enter your comment here</string>
+    <string name="comment_detail">Detail Comment</string>
+    <string name="detail_comment_hint">Comment:</string>
+    <string name="detail_date_hint">Comment Date:</string>
+    <string name="comment_delete">Delete Comment</string>
+
 
     <!-- Accessibility -->
     <string name="more_actions">More Actions</string>
