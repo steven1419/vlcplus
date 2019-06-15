@@ -39,10 +39,7 @@ import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.R
 import org.videolan.vlc.extensions.ExtensionManagerService
 import org.videolan.vlc.extensions.api.VLCExtensionItem
-import org.videolan.vlc.gui.HistoryFragment
-import org.videolan.vlc.gui.MainActivity
-import org.videolan.vlc.gui.PlaylistFragment
-import org.videolan.vlc.gui.SecondaryActivity
+import org.videolan.vlc.gui.*
 import org.videolan.vlc.gui.audio.AudioBrowserFragment
 import org.videolan.vlc.gui.browser.*
 import org.videolan.vlc.gui.folders.FoldersFragment
@@ -90,6 +87,7 @@ class Navigator(private val activity: MainActivity,
             R.id.nav_playlists -> PlaylistFragment()
             R.id.nav_history -> HistoryFragment()
             R.id.nav_network -> NetworkBrowserFragment()
+            R.id.nav_history_statistics -> HistoryStatisticsFragment()
             else -> {
                 val group = Integer.valueOf(Settings.getInstance(activity.applicationContext).getString("video_min_group_length", "6")!!)
                 if (group == 0) FoldersFragment()
@@ -171,6 +169,7 @@ class Navigator(private val activity: MainActivity,
         R.id.nav_mrl -> ID_MRL
         R.id.nav_network -> ID_NETWORK
         R.id.nav_video -> ID_VIDEO
+        R.id.nav_history_statistics -> ID_HISTORY_STATISTICS
         else -> if (defaultFragmentId == R.id.nav_video) ID_VIDEO else ID_DIRECTORIES
     }
 

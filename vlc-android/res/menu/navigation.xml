@@ -34,6 +34,10 @@
             android:id="@+id/nav_history"
             android:title="@string/history"
             android:icon="@drawable/ic_menu_history" />
+        <item
+            android:id="@+id/nav_history_statistics"
+            android:title="History Statistics"
+            android:icon="@drawable/ic_menu_history" />
     </group>
 
     <item
