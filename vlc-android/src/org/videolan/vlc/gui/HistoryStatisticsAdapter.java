@@ -60,6 +60,15 @@ public class HistoryStatisticsAdapter extends RecyclerView.Adapter<HistoryStatis
                     mListener.onItemClick(holder.itemView, pos);
                 }
             });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int pos = holder.getLayoutPosition();
+                    mListener.onItemLongClick(holder.itemView, pos);
+                    return false;
+                }
+            });
         }
     }
 
@@ -70,6 +79,7 @@ public class HistoryStatisticsAdapter extends RecyclerView.Adapter<HistoryStatis
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+        void onItemLongClick(View view, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener mListener) {

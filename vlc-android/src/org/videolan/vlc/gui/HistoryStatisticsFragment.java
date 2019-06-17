@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.appcompat.view.ActionMode;
@@ -27,7 +28,11 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.EntryXComparator;
 
+import org.videolan.vlc.R;
 import org.videolan.vlc.gui.browser.MediaBrowserFragment;
+import org.videolan.vlc.gui.dialogs.DeleteCommentDialog;
+import org.videolan.vlc.gui.dialogs.DetailCommentDialog;
+import org.videolan.vlc.gui.dialogs.SaveCommentDialog;
 import org.videolan.vlc.gui.helpers.HistoryOperator;
 import org.videolan.vlc.gui.view.SwipeRefreshLayout;
 import org.videolan.vlc.viewmodels.HistoryStatisticsModel;
@@ -149,6 +154,11 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
                 }
                 mHistoryStatisticsAdapter.notifyItemChanged(position);
             }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+                showPopupMenu(view, position);
+            }
         });
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -159,6 +169,30 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
         mRecyclerView.setNextFocusRightId(android.R.id.list);
         registerForContextMenu(mRecyclerView);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    private void showPopupMenu(View view, final int position) {
+        final HistoryStatisticsFragment historyStatisticsFragment = this;
+        PopupMenu popupMenu = new PopupMenu(mActivity, view);
+        popupMenu.getMenuInflater().inflate(R.menu.history_statistics_menu, popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.setComment:
+                        Toast.makeText(mActivity, "set comment", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.checkDetail:
+                        Toast.makeText(mActivity, "check detail", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.deleteComment:
+                        Toast.makeText(mActivity, "delete comment", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     public void updateLoadRecord(String input, int position) {
