@@ -83,7 +83,6 @@ public class MainActivity extends ContentActivity implements ExtensionManagerSer
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
     private Navigator mNavigator;
-
     private HistoryOperator mHistoryOperator;
 
     private boolean mScanNeeded = false;
@@ -133,7 +132,7 @@ public class MainActivity extends ContentActivity implements ExtensionManagerSer
         mScanNeeded = savedInstanceState == null && mSettings.getBoolean("auto_rescan", true);
         mExtensionsManager = ExtensionsManager.getInstance();
         mMediaLibrary = VLCApplication.getMLInstance();
-        mHistoryOperator = new HistoryOperator();
+        mHistoryOperator = HistoryOperator.getInstance();
     }
 
     private void setupNavigationView() {
@@ -174,6 +173,7 @@ public class MainActivity extends ContentActivity implements ExtensionManagerSer
     @Override
     protected void onStop() {
         super.onStop();
+        mHistoryOperator = HistoryOperator.getInstance();
         mHistoryOperator.saveTimeRecord();
         mNavigationView.setNavigationItemSelectedListener(null);
         if (getChangingConfigurations() == 0) {

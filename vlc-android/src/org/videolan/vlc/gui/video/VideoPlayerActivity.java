@@ -403,7 +403,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IPlaybackS
             mSavedTime = savedInstanceState.getLong(KEY_TIME);
             mUri = (Uri) savedInstanceState.getParcelable(KEY_URI);
         }
-        mHistoryOperator = new HistoryOperator();
+        mHistoryOperator = HistoryOperator.getInstance();
     }
 
     @Override
@@ -2616,7 +2616,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IPlaybackS
                 if (title == null && itemTitle != null) title = itemTitle;
                 Log.d(TAG, "loadMedia: video " + title + " started");
                 mHistoryOperator.saveTimeRecord();
-                mHistoryOperator.saveVideoRecord(title);
+                mHistoryOperator.saveVideoRecord(title, mUri.getEncodedPath());
             }
         } else if (mService.hasMedia() && !mDisplayManager.isPrimary()){
             onPlaying();

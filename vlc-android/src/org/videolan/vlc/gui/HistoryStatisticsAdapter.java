@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.videolan.vlc.R;
+
 public class HistoryStatisticsAdapter extends RecyclerView.Adapter<HistoryStatisticsAdapter.ViewHolder> {
     public static final String TAG = "VLC/HistoryStatisticsAdapter";
 
@@ -22,7 +24,7 @@ public class HistoryStatisticsAdapter extends RecyclerView.Adapter<HistoryStatis
 
         public ViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(org.videolan.vlc.R.id.textViewItem);
+            textView = (TextView) itemView.findViewById(R.id.textViewItem);
         }
     }
 
@@ -45,13 +47,22 @@ public class HistoryStatisticsAdapter extends RecyclerView.Adapter<HistoryStatis
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(org.videolan.vlc.R.layout.history_statistics_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_statistics_item, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.textView.setText(dataList.get(position));
+        String[] dataListSplit = dataList.get(position).split(",");
+        if (dataListSplit.length < 2) {
+            holder.textView.setText(dataList.get(position));
+        } else {
+            if (dataListSplit[1].length() < 10) {
+                holder.textView.setText(dataListSplit[0] + "    --\"" + dataListSplit[1] + "\"");
+            } else {
+                holder.textView.setText(dataListSplit[0] + "    --\"" + dataListSplit[1].substring(0, 10) + "...\"");
+            }
+        }
         if (mListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -79,6 +90,7 @@ public class HistoryStatisticsAdapter extends RecyclerView.Adapter<HistoryStatis
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+
         void onItemLongClick(View view, int position);
     }
 

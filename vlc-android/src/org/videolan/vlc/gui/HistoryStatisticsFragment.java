@@ -3,6 +3,7 @@ package org.videolan.vlc.gui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.EntryXComparator;
 
+import org.videolan.medialibrary.media.MediaWrapper;
 import org.videolan.vlc.R;
 import org.videolan.vlc.gui.browser.MediaBrowserFragment;
 import org.videolan.vlc.gui.dialogs.DeleteCommentDialog;
@@ -35,6 +37,7 @@ import org.videolan.vlc.gui.dialogs.DetailCommentDialog;
 import org.videolan.vlc.gui.dialogs.SaveCommentDialog;
 import org.videolan.vlc.gui.helpers.HistoryOperator;
 import org.videolan.vlc.gui.view.SwipeRefreshLayout;
+import org.videolan.vlc.media.MediaUtils;
 import org.videolan.vlc.viewmodels.HistoryStatisticsModel;
 
 import java.text.SimpleDateFormat;
@@ -80,7 +83,7 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//        mode.getMenuInflater().inflate(org.videolan.vlc.R.menu.action_mode_history_statistics, menu);
+        mode.getMenuInflater().inflate(R.menu.action_mode_history_statistics, menu);
         return true;
     }
 
@@ -146,13 +149,14 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
         mHistoryStatisticsAdapter.setOnItemClickListener(new HistoryStatisticsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String s = (String) videoRecord.get(currentIndex + position);
-                if (s.indexOf("--->") == -1) {
-                    mHistoryStatisticsAdapter.getDataList().set(position, s + "---> clicked");
-                } else {
-                    mHistoryStatisticsAdapter.getDataList().set(position, s.substring(0, s.indexOf("--->")));
-                }
-                mHistoryStatisticsAdapter.notifyItemChanged(position);
+                String path = loadRecord.get(currentIndex + position).split(",")[1];
+                Uri mUri;
+                if (path.charAt(0) == '/')
+                    path = "file://" + path;
+                mUri = Uri.parse(path);
+                MediaWrapper mediaWrapper = new MediaWrapper(mUri);
+//                Log.d(TAG, "onItemClick: media length : " + mediaWrapper.getLength() );
+                MediaUtils.INSTANCE.openMedia(historyStatisticsFragment.getContext(), mediaWrapper);
             }
 
             @Override
@@ -163,7 +167,7 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mHistoryStatisticsAdapter);
-        mRecyclerView.setNextFocusUpId(org.videolan.vlc.R.id.chart);
+        mRecyclerView.setNextFocusUpId(R.id.chart);
         mRecyclerView.setNextFocusDownId(android.R.id.list);
         mRecyclerView.setNextFocusLeftId(android.R.id.list);
         mRecyclerView.setNextFocusRightId(android.R.id.list);
@@ -181,13 +185,24 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.setComment:
-                        Toast.makeText(mActivity, "set comment", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mActivity, "set comment", Toast.LENGTH_SHORT).show();
+                        SaveCommentDialog saveCommentDialog = new SaveCommentDialog();
+                        saveCommentDialog.setHistoryStatisticsFragment(historyStatisticsFragment);
+                        saveCommentDialog.setRecord(loadRecord.get(currentIndex + position), position);
+                        saveCommentDialog.show(getActivity().getSupportFragmentManager(), "fragment_add_comment");
                         break;
                     case R.id.checkDetail:
-                        Toast.makeText(mActivity, "check detail", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mActivity, "check detail", Toast.LENGTH_SHORT).show();
+                        DetailCommentDialog detailCommentDialog = new DetailCommentDialog();
+                        detailCommentDialog.setRecord(loadRecord.get(currentIndex + position), position);
+                        detailCommentDialog.show(getActivity().getSupportFragmentManager(), "fragment_detail_comment");
                         break;
                     case R.id.deleteComment:
-                        Toast.makeText(mActivity, "delete comment", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mActivity, "delete comment", Toast.LENGTH_SHORT).show();
+                        DeleteCommentDialog deleteCommentDialog = new DeleteCommentDialog();
+                        deleteCommentDialog.setHistoryStatisticsFragment(historyStatisticsFragment);
+                        deleteCommentDialog.setRecord(loadRecord.get(currentIndex + position), position);
+                        deleteCommentDialog.show(getActivity().getSupportFragmentManager(), "fragment_delete_comment");
                         break;
                 }
                 return true;
@@ -314,7 +329,9 @@ public class HistoryStatisticsFragment extends MediaBrowserFragment<HistoryStati
         for (int i = 0; i < loadRecord.size(); i++) {
             stringSplit = loadRecord.get(i).split(",");
             videoTimeStamp.add(stringSplit[0]);
-            videoRecord.add(stringSplit[1]);
+            videoRecord.add(loadRecord.get(i).substring(stringSplit[0].length() + stringSplit[1].length() + 2));
+//            Log.d(TAG, "loadVideoData: videoRecord : " + loadRecord.get(i).substring(stringSplit[0].length() + stringSplit[1].length() + 2));
+//            videoRecord.add(stringSplit[1]);
             if (!lastInsertTime.equals(stringSplit[0])) {
                 try {
                     videoTimeIndex.put(Float.valueOf(String.valueOf(simpleDateFormat.parse(stringSplit[0]).getTime())), i);
